@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "lyrics",
+  "type": "registry:component",
+  "title": "Lyrics",
+  "description": "A simple lyrics component",
+  "files": [
+    {
+      "path": "registry/new-york/ui/lyrics.tsx",
+      "content": "'use client';\r\n\r\nimport { useEffect, useRef } from 'react';\r\n\r\ninterface LyricLine {\r\n  time: number;\r\n  text: string;\r\n  id: string;\r\n}\r\n\r\ninterface LyricsViewerProps {\r\n  lyrics: LyricLine[];\r\n  currentTime: number;\r\n  title?: string;\r\n  className?: string;\r\n}\r\n\r\nexport default function LyricsViewer({ lyrics, currentTime }: LyricsViewerProps) {\r\n  const lyricsContainerRef = useRef<HTMLDivElement>(null);\r\n\r\n  // Find current line based on time\r\n  const findCurrentLine = (time: number) => {\r\n    for (let i = lyrics.length - 1; i >= 0; i--) {\r\n      if (time >= lyrics[i].time) {\r\n        return i;\r\n      }\r\n    }\r\n    return -1;\r\n  };\r\n\r\n  const currentLineIndex = findCurrentLine(currentTime);\r\n\r\n  // Auto-scroll to current line\r\n  useEffect(() => {\r\n    if (currentLineIndex >= 0 && lyricsContainerRef.current) {\r\n      const currentElement = document.getElementById(lyrics[currentLineIndex].id);\r\n      if (currentElement) {\r\n        currentElement.scrollIntoView({\r\n          behavior: 'smooth',\r\n          block: 'center'\r\n        });\r\n      }\r\n    }\r\n  }, [currentLineIndex, lyrics]);\r\n\r\n  return (\r\n    <div ref={lyricsContainerRef} className=\"h-80 overflow-y-auto scroll-smooth px-4\">\r\n      <div className=\"space-y-4 py-8\">\r\n        {lyrics.map((line, index) => (\r\n          <div\r\n            key={line.id}\r\n            id={line.id}\r\n            className={`\r\n                  transition-all duration-500 ease-in-out text-center leading-relaxed text-lg\r\n                  ${index === currentLineIndex ? 'text-blue-600 font-bold scale-105' : 'text-muted-foreground'}\r\n                  ${index < currentLineIndex ? 'opacity-50' : ''}\r\n                `}\r\n          >\r\n            {line.text}\r\n          </div>\r\n        ))}\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n\r\nexport type { LyricLine, LyricsViewerProps };\r\n",
+      "type": "registry:component"
+    }
+  ]
+}
